@@ -1,4 +1,4 @@
-"""Generic process-independent LLM experiment gateway. No database, sessions, or key persistence."""
+"""Synthetic invoice-exception assistant and multi-provider LLM gateway."""
 import json
 import re
 import time
@@ -7,8 +7,9 @@ from typing import Literal
 import httpx
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
+from rules import CASES, evaluate
 
-app = FastAPI(title="Intelligent BPM Lab", version="1.0.0")
+app = FastAPI(title="BYD Invoice Exception Assistant", version="2.0.0")
 
 PROVIDERS = {
     "OpenAI": {"url": "https://api.openai.com/v1/chat/completions", "models": ["gpt-4.1-mini", "gpt-5-mini"]},
@@ -36,7 +37,18 @@ class RunRequest(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "mode": "generic", "keys_stored": False}
+    return {"status": "ok", "mode": "synthetic-invoice-exceptions", "keys_stored": False}
+
+@app.get("/api/cases")
+def cases():
+    return {"cases": CASES, "evaluations": {c["id"]: evaluate(c) for c in CASES}, "synthetic": True}
+
+@app.get("/api/cases/{case_id}/evaluate")
+def evaluate_case(case_id: str):
+    case = next((c for c in CASES if c["id"] == case_id), None)
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+    return evaluate(case)
 
 @app.get("/api/providers")
 def providers():
