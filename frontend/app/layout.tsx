@@ -1,4 +1,4 @@
 import './style.css';
 import type { Metadata } from 'next';
-export const metadata: Metadata = { title: 'Intelligent BPM Lab', description: 'Process-independent LLM experiments for FHNW BPM' };
+export const metadata: Metadata = { title: 'Invoice Exception Assistant | FHNW', description: 'BYD invoice exception analysis prototype for FHNW Business Process Management' };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {return <html lang="en"><body>{children}</body></html>}
