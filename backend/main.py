@@ -2,10 +2,14 @@
 import json
 import re
 import time
+from io import BytesIO
 from typing import Literal
 
 import httpx
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import Response
+from reportlab.pdfgen import canvas
+from reportlab.lib.colors import HexColor
 from pydantic import BaseModel, Field
 from rules import CASES, evaluate
 
@@ -50,6 +54,61 @@ def evaluate_case(case_id: str):
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
     return evaluate(case)
+
+@app.get("/api/invoices/{case_id}/pdf")
+def invoice_pdf(case_id: str, download: bool = False):
+    """Render a printable fictional invoice (not a scanned original supplier document)."""
+    item = next((c for c in CASES if c["id"] == case_id), None)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    buf = BytesIO()
+    doc = canvas.Canvas(buf, pagesize=(595.28, 841.89))
+    blue = HexColor("#173B5D")
+    muted = HexColor("#53677B")
+    def line(text, x, y, size=10, color=muted, bold=False):
+        doc.setFont("Helvetica-Bold" if bold else "Helvetica", size)
+        doc.setFillColor(color)
+        doc.drawString(x, y, str(text))
+    doc.setFillColor(blue)
+    doc.rect(0, 764, 595.28, 78, stroke=0, fill=1)
+    line("SYNTHETIC INVOICE", 48, 798, 20, HexColor("#FFFFFF"), True)
+    line("BYD / FHNW educational case study - not a real invoice", 48, 778, 9, HexColor("#DDECF7"))
+    line(item["supplier"], 48, 729, 17, blue, True)
+    line("Supplier (fictional)", 48, 707)
+    line("Invoice number", 48, 664, 9)
+    line(item["invoice"], 48, 645, 13, blue, True)
+    line("Purchase order", 300, 664, 9)
+    line(item["po"] or "Not supplied", 300, 645, 13, blue, True)
+    doc.setStrokeColor(HexColor("#D8E4EF"))
+    doc.line(48, 621, 548, 621)
+    line("Description", 48, 593, 10, blue, True)
+    line("Quantity", 319, 593, 10, blue, True)
+    line("Unit price", 417, 593, 10, blue, True)
+    line("Synthetic goods / service", 48, 556)
+    line(item["invoice_qty"], 319, 556)
+    line(f'{item["currency"]} {item["invoice_unit_price"]:,.2f}', 417, 556)
+    doc.line(48, 531, 548, 531)
+    total = item["invoice_qty"] * item["invoice_unit_price"]
+    line("TOTAL", 310, 505, 11, blue, True)
+    line(f'{item["currency"]} {total:,.2f}', 405, 505, 13, blue, True)
+    line("Supporting purchasing records (case-study metadata)", 48, 451, 12, blue, True)
+    line(f'PO quantity: {item["po_qty"] if item["po_qty"] is not None else "Not supplied"}', 48, 422)
+    line(f'PO unit price: {item["currency"]} {item["po_unit_price"]:,.2f}' if item["po_unit_price"] is not None else "PO unit price: Not supplied", 48, 402)
+    line(f'Goods received: {item["received_qty"] if item["received_qty"] is not None else "Not recorded"}', 48, 382)
+    line("Case context (fictional)", 48, 333, 11, blue, True)
+    from reportlab.lib.utils import simpleSplit
+    for i, chunk in enumerate(simpleSplit(item["notes"], "Helvetica", 10, 495)):
+        line(chunk, 48, 311 - i * 16)
+    doc.setStrokeColor(HexColor("#D8E4EF"))
+    doc.line(48, 94, 548, 94)
+    line("DEMONSTRATION ONLY - synthetic values, no tax or payment instructions", 48, 76, 9, muted)
+    doc.setTitle(f'Synthetic invoice {item["invoice"]}')
+    doc.save()
+    content = buf.getvalue()
+    disposition = "attachment" if download else "inline"
+    return Response(content=content, media_type="application/pdf",
+                    headers={"Content-Disposition": f'{disposition}; filename="{item["invoice"]}.pdf"',
+                             "Cache-Control": "public, max-age=600"})
 
 @app.get("/api/providers")
 def providers():
