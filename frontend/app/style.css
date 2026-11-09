@@ -69,3 +69,29 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;backgro
 #invoice-detail{scroll-margin-top:25px}
 @media(max-width:1000px){.tableToolbar{align-items:flex-start;flex-direction:column}.tableFilters{max-width:100%}}
 @media(max-width:620px){.invoiceTablePanel{padding:17px}.invoiceTableHeader{display:block}.tableAiNote{display:inline-block;margin-bottom:13px}.tableFilters button{padding:7px 8px;font-size:10px}.tableFooter{flex-direction:column}}
+
+/* Presentation demo mode and invoice document UI */
+.modePanel{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:24px;padding:19px 22px;border:1px solid #cfdfed;border-radius:13px;background:#fff;box-shadow:0 3px 15px #17395908}
+.modePanel.modeDemo{border-color:#8faecb;background:linear-gradient(98deg,#eef5fb,#ffffff)}
+.modePanel strong{font:800 15px 'Plus Jakarta Sans',sans-serif;color:#173956;display:block}
+.modePanel p{color:#75899c;font-size:11.5px;margin:7px 0 0;line-height:1.55}
+.modeSwitch{display:flex;gap:3px;border:1px solid #d9e5f0;border-radius:10px;background:#edf3f9;padding:4px;flex:none}
+.modeSwitch button{background:transparent;color:#627e98;box-shadow:none;font-size:11px;padding:10px 13px}
+.modeSwitch button:hover:not(:disabled){box-shadow:none;background:#e3edf6}
+.modeSwitch button.active{background:#fff;color:#194f7e;box-shadow:0 1px 7px #12345120}
+.demoExplainer{margin-top:16px;padding:17px 19px;border:1px dashed #8dacca;background:#f4f9fe;border-radius:11px}
+.demoExplainer strong{font-size:12px;color:#245274}
+.demoExplainer p{font-size:11.5px;color:#6b8398;line-height:1.65;margin:7px 0 0}
+.invoiceActions{display:flex;gap:5px;align-items:center;flex-wrap:nowrap}
+.invoiceActions .tableOpen{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:10.5px}
+.invoiceDocumentActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:17px}
+.invoiceDocumentActions a.tableOpen{display:inline-flex;align-items:center;text-decoration:none;padding:9px 11px}
+.pdfBackdrop{position:fixed;inset:0;z-index:1000;background:#0c2339bd;padding:3vh 3vw;display:flex;align-items:center;justify-content:center}
+.pdfDialog{background:#fff;width:min(920px,100%);height:min(94vh,1040px);display:flex;flex-direction:column;border-radius:15px;box-shadow:0 28px 95px #07162466;overflow:hidden}
+.pdfDialogHead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 20px;border-bottom:1px solid #dce7f1}
+.pdfDialogHead strong,.pdfDialogHead span{display:block}.pdfDialogHead strong{font-size:15px;color:#173b59}.pdfDialogHead span{font-size:11px;color:#7990a6;margin-top:5px}
+.pdfDialogButtons{display:flex;gap:8px;align-items:center}.pdfDialogButtons a{white-space:nowrap;text-decoration:none;padding:10px 12px}
+.pdfDialogButtons button{padding:10px 12px;font-size:11px}
+.pdfFrame{display:block;flex:1;min-height:0;width:100%;border:0;background:#e6edf3}
+.pdfNotice{font-size:10px;color:#899aab;margin:0;padding:9px 17px;text-align:center}
+@media(max-width:700px){.modePanel{align-items:stretch;flex-direction:column}.modeSwitch{align-self:flex-start}.pdfBackdrop{padding:10px}.pdfDialog{height:94vh}.pdfDialogHead{padding:12px}.pdfDialogButtons{gap:5px}.pdfDialogButtons a,.pdfDialogButtons button{padding:8px;font-size:10px}.invoiceActions{flex-wrap:wrap}}
