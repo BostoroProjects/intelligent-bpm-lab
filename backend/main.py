@@ -57,58 +57,103 @@ def evaluate_case(case_id: str):
 
 @app.get("/api/invoices/{case_id}/pdf")
 def invoice_pdf(case_id: str, download: bool = False):
-    """Render a printable fictional invoice (not a scanned original supplier document)."""
+    """Generate a fictional supplier invoice; do not disclose independent matching data."""
     item = next((c for c in CASES if c["id"] == case_id), None)
     if item is None:
         raise HTTPException(status_code=404, detail="Invoice not found")
+
+    index = CASES.index(item)
+    descriptions = [
+        "Precision mounting brackets", "Industrial fastener assemblies",
+        "Warehouse transport service", "Building maintenance service",
+        "Electronic control modules", "Cold-rolled steel components",
+        "Protective shipping cartons", "Stainless steel fasteners",
+        "Technical polymer sheets", "Hydraulic fittings",
+        "Electrical terminal blocks", "Workshop tooling kit",
+        "Metal housing components", "Machine drive units",
+        "Industrial packing material"
+    ]
+    from datetime import date, timedelta
+    from decimal import Decimal
+    invoice_date = date(2026, 10, 1) + timedelta(days=index)
+    due_date = invoice_date + timedelta(days=30)
+    total = Decimal(str(item["invoice_qty"])) * Decimal(str(item["invoice_unit_price"]))
+    money = lambda value: f"{Decimal(str(value)):,.2f}"
+
     buf = BytesIO()
     doc = canvas.Canvas(buf, pagesize=(595.28, 841.89))
-    blue = HexColor("#173B5D")
-    muted = HexColor("#53677B")
-    def line(text, x, y, size=10, color=muted, bold=False):
+    navy, blue, gray, pale = (
+        HexColor("#173B5D"), HexColor("#316287"),
+        HexColor("#64748B"), HexColor("#E7EEF4")
+    )
+    def write(text, x, y, size=10, color=navy, bold=False):
         doc.setFont("Helvetica-Bold" if bold else "Helvetica", size)
         doc.setFillColor(color)
         doc.drawString(x, y, str(text))
-    doc.setFillColor(blue)
-    doc.rect(0, 764, 595.28, 78, stroke=0, fill=1)
-    line("SYNTHETIC INVOICE", 48, 798, 20, HexColor("#FFFFFF"), True)
-    line("BYD / FHNW educational case study - not a real invoice", 48, 778, 9, HexColor("#DDECF7"))
-    line(item["supplier"], 48, 729, 17, blue, True)
-    line("Supplier (fictional)", 48, 707)
-    line("Invoice number", 48, 664, 9)
-    line(item["invoice"], 48, 645, 13, blue, True)
-    line("Purchase order", 300, 664, 9)
-    line(item["po"] or "Not supplied", 300, 645, 13, blue, True)
-    doc.setStrokeColor(HexColor("#D8E4EF"))
-    doc.line(48, 621, 548, 621)
-    line("Description", 48, 593, 10, blue, True)
-    line("Quantity", 319, 593, 10, blue, True)
-    line("Unit price", 417, 593, 10, blue, True)
-    line("Synthetic goods / service", 48, 556)
-    line(item["invoice_qty"], 319, 556)
-    line(f'{item["currency"]} {item["invoice_unit_price"]:,.2f}', 417, 556)
-    doc.line(48, 531, 548, 531)
-    total = item["invoice_qty"] * item["invoice_unit_price"]
-    line("TOTAL", 310, 505, 11, blue, True)
-    line(f'{item["currency"]} {total:,.2f}', 405, 505, 13, blue, True)
-    line("Supporting purchasing records (case-study metadata)", 48, 451, 12, blue, True)
-    line(f'PO quantity: {item["po_qty"] if item["po_qty"] is not None else "Not supplied"}', 48, 422)
-    line(f'PO unit price: {item["currency"]} {item["po_unit_price"]:,.2f}' if item["po_unit_price"] is not None else "PO unit price: Not supplied", 48, 402)
-    line(f'Goods received: {item["received_qty"] if item["received_qty"] is not None else "Not recorded"}', 48, 382)
-    line("Case context (fictional)", 48, 333, 11, blue, True)
-    from reportlab.lib.utils import simpleSplit
-    for i, chunk in enumerate(simpleSplit(item["notes"], "Helvetica", 10, 495)):
-        line(chunk, 48, 311 - i * 16)
-    doc.setStrokeColor(HexColor("#D8E4EF"))
-    doc.line(48, 94, 548, 94)
-    line("DEMONSTRATION ONLY - synthetic values, no tax or payment instructions", 48, 76, 9, muted)
-    doc.setTitle(f'Synthetic invoice {item["invoice"]}')
+    def right(text, x, y, size=10, color=navy, bold=False):
+        doc.setFont("Helvetica-Bold" if bold else "Helvetica", size)
+        doc.setFillColor(color)
+        doc.drawRightString(x, y, str(text))
+
+    # Ordinary business invoice appearance; only supplier-provided values appear.
+    doc.setFillColor(navy)
+    doc.rect(0, 752, 595.28, 90, stroke=0, fill=1)
+    write(item["supplier"], 48, 800, 18, HexColor("#FFFFFF"), True)
+    write("SUPPLIER INVOICE", 48, 778, 10, HexColor("#D5E8F6"))
+    right("INVOICE", 546, 797, 21, HexColor("#FFFFFF"), True)
+    right(item["invoice"], 546, 775, 12, HexColor("#FFFFFF"), True)
+
+    write("ISSUED BY", 48, 717, 9, gray, True)
+    write(item["supplier"], 48, 694, 12, navy, True)
+    write("Fictional supplier for academic case study", 48, 676, 9, gray)
+    write("BILL TO", 320, 717, 9, gray, True)
+    write("BYD - Accounts Payable", 320, 694, 12, navy, True)
+    write("Fictional purchasing scenario", 320, 676, 9, gray)
+
+    doc.setStrokeColor(pale)
+    doc.line(48, 647, 548, 647)
+    write("Invoice date", 48, 623, 9, gray)
+    write(invoice_date.strftime("%d %b %Y"), 48, 603, 11, navy, True)
+    write("Due date", 195, 623, 9, gray)
+    write(due_date.strftime("%d %b %Y"), 195, 603, 11, navy, True)
+    write("PO reference", 355, 623, 9, gray)
+    write(item["po"] or "Not stated", 355, 603, 11, navy, True)
+
+    doc.setFillColor(HexColor("#F1F6FA"))
+    doc.rect(48, 542, 500, 34, stroke=0, fill=1)
+    write("ITEM / DESCRIPTION", 61, 554, 9, blue, True)
+    right("QTY", 345, 554, 9, blue, True)
+    right("UNIT CHF", 451, 554, 9, blue, True)
+    right("TOTAL CHF", 538, 554, 9, blue, True)
+    write(descriptions[index], 61, 509, 10, navy)
+    right(str(item["invoice_qty"]), 345, 509)
+    right(money(item["invoice_unit_price"]), 451, 509)
+    right(money(total), 538, 509, 10, navy, True)
+    doc.line(48, 483, 548, 483)
+    right("Subtotal", 447, 451, 10, gray)
+    right(f"CHF {money(total)}", 538, 451, 11, navy)
+    right("AMOUNT DUE", 447, 414, 11, navy, True)
+    right(f"CHF {money(total)}", 538, 414, 15, navy, True)
+
+    write("Payment terms", 48, 347, 10, navy, True)
+    write("Net 30 days from invoice date.", 48, 329, 10, gray)
+    write("Please include the invoice number with any payment correspondence.", 48, 310, 9, gray)
+    write("Amounts in CHF; tax breakdown and bank details omitted in this academic example.", 48, 288, 9, gray)
+
+    # Intentionally do not include PO line values, receipt quantities or exception labels.
+    doc.line(48, 98, 548, 98)
+    write("SYNTHETIC DOCUMENT  |  FHNW educational prototype  |  Not a real supplier invoice",
+          48, 79, 8.5, gray)
+    doc.setTitle(f"Invoice {item['invoice']} - Synthetic")
     doc.save()
-    content = buf.getvalue()
     disposition = "attachment" if download else "inline"
-    return Response(content=content, media_type="application/pdf",
-                    headers={"Content-Disposition": f'{disposition}; filename="{item["invoice"]}.pdf"',
-                             "Cache-Control": "public, max-age=600"})
+    return Response(
+        content=buf.getvalue(), media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'{disposition}; filename="{item["invoice"]}.pdf"',
+            "Cache-Control": "no-store"
+        }
+    )
 
 @app.get("/api/providers")
 def providers():
