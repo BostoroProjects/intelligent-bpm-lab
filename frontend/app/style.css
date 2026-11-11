@@ -218,3 +218,16 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;backgro
 .invoiceDocumentActions .portalButton{padding:9px 13px}
 .portalHint{font-size:10.5px;color:#708a9f;line-height:1.6;margin:7px 0 13px}
 .invoiceRegister .portalButton{font-size:10px;padding:7px 9px}
+
+/* Batch portal auto-registration toggle */
+.autoRegisterControl{display:flex!important;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 15px!important;padding:13px 12px;background:#f5faf7;border:1px solid #d5e9dd;border-radius:10px;cursor:pointer;letter-spacing:normal!important}
+.autoRegisterText{min-width:0;flex:1}
+.autoRegisterText strong{display:block;font-size:11.5px;color:#235941}
+.autoRegisterText small{display:block;font-size:10px;font-weight:500;line-height:1.6;color:#728c7f;margin-top:5px}
+.autoRegisterControl input[type=checkbox]{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.autoRegisterSlider{flex:none;display:block;width:39px;height:23px;border-radius:99px;background:#b8c6c0;position:relative;transition:background .2s}
+.autoRegisterSlider:before{content:"";position:absolute;top:3px;left:3px;background:white;width:17px;height:17px;border-radius:50%;box-shadow:0 1px 4px #17395933;transition:transform .2s}
+.autoRegisterControl input:checked+.autoRegisterSlider{background:#328061}
+.autoRegisterControl input:checked+.autoRegisterSlider:before{transform:translateX(16px)}
+.autoRegisterControl input:focus-visible+.autoRegisterSlider{outline:3px solid #8fb9dd;outline-offset:3px}
+.autoRegisterControl:has(input:disabled){opacity:.65;cursor:not-allowed}
