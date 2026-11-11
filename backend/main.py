@@ -173,7 +173,7 @@ async def run(req: RunRequest):
         headers = {"Authorization": "Bearer " + req.api_key, "Content-Type": "application/json"}
         body = {"model": req.model, "messages": [{"role": "system", "content": instructions},
                {"role": "user", "content": req.case_input}]}
-        # Cap batch output so all 15 classifications can fit in one response.
+        # Cap output according to the caller's token budget; batch size comes from the request.
         if req.provider == "OpenAI":
             body["max_completion_tokens"] = req.max_output_tokens
         else:
