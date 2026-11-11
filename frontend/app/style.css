@@ -129,3 +129,22 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;backgro
 .comparisonAIFinding p{font-size:11.5px;color:#41627e;line-height:1.7;margin:8px 0}
 .comparisonFoot{display:block;font-size:10px;color:#748b9d;margin-top:11px;line-height:1.55}
 @media(max-width:750px){.comparisonSources{grid-template-columns:1fr}.comparisonHeading{display:block}.comparisonSummary{margin-top:12px}.comparisonContent{gap:13px}}
+
+/* Raw, unclassified source documents */
+.rawDocs{display:flex;flex-direction:column;gap:16px}
+.rawDocsIntro strong{font-size:14px;color:#173c5a}
+.rawDocsIntro p{color:#758da2;font-size:11.5px;line-height:1.7;margin:7px 0 0}
+.rawDocCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.rawDocCard{border:1px solid #dbe8f2;background:#f9fbfd;border-radius:12px;padding:15px;min-width:0}
+.rawDocHeading{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:11px}
+.rawDocHeading span{font-size:10px;letter-spacing:.25px;font-weight:850;color:#6c8499}
+.rawDocHeading button{font-size:10px;padding:6px 8px}
+.rawDocCard>strong{display:block;color:#1d4768;font-size:14px;line-height:1.45}
+.rawDocCard dl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 8px;border-top:1px solid #e3ebf2;margin:14px 0 0;padding-top:13px;font-size:10.5px}
+.rawDocCard dt{color:#7890a5}.rawDocCard dd{margin:0;text-align:right;color:#2c536f;font-weight:750;overflow-wrap:anywhere}
+.rawNextStep{padding:17px;background:#f2f7fb;border:1px solid #dce8f2;border-radius:10px}
+.rawNextStep strong{font-size:12px;color:#174565}
+.rawNextStep p{font-size:11.5px;color:#688198;line-height:1.6;margin:7px 0}
+.rawNextStep span{font-size:10.5px;color:#8296aa}
+.rawNextStep button{margin-top:7px}
+@media(max-width:1000px){.rawDocCards{grid-template-columns:1fr}}
