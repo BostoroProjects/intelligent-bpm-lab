@@ -95,3 +95,37 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;backgro
 .pdfFrame{display:block;flex:1;min-height:0;width:100%;border:0;background:#e6edf3}
 .pdfNotice{font-size:10px;color:#899aab;margin:0;padding:9px 17px;text-align:center}
 @media(max-width:700px){.modePanel{align-items:stretch;flex-direction:column}.modeSwitch{align-self:flex-start}.pdfBackdrop{padding:10px}.pdfDialog{height:94vh}.pdfDialogHead{padding:12px}.pdfDialogButtons{gap:5px}.pdfDialogButtons a,.pdfDialogButtons button{padding:8px;font-size:10px}.invoiceActions{flex-wrap:wrap}}
+
+
+/* Independent matching proof / explainability */
+.comparisonContent{display:flex;flex-direction:column;gap:16px}
+.comparisonHeading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.comparisonHeading strong{font-size:14px;color:#153d5d}
+.comparisonHeading p{font-size:11.5px;line-height:1.65;color:#6b8498;margin:7px 0 0}
+.comparisonSummary{display:inline-flex;flex:none;white-space:nowrap;border:1px solid #c9e7d6;background:#e9f7ef;color:#256448;font-weight:800;border-radius:30px;padding:8px 10px;font-size:10px}
+.comparisonSummary.hasVariance{color:#935d24;background:#fff3e5;border-color:#f1d8b9}
+.comparisonSources{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.comparisonSources>div{padding:13px 14px;background:#f6f9fc;border:1px solid #e0eaf2;border-radius:9px;min-width:0}
+.comparisonSources span{display:block;color:#6a849a;font-size:10px;font-weight:850;margin-bottom:8px}
+.comparisonSources strong{display:block;font-size:13px;color:#1e4667;overflow-wrap:anywhere}
+.comparisonSources small{display:block;font-size:10.5px;line-height:1.5;color:#778da0;margin-top:6px}
+.comparisonSources .tableOpen{margin-top:9px;padding:6px 9px;font-size:10px}
+.comparisonScroll{overflow:auto;border:1px solid #dfebf3;border-radius:10px}
+.comparisonTable{border-collapse:collapse;width:100%;min-width:650px;font-size:11px}
+.comparisonTable th{text-align:left;color:#5d7790;background:#f0f6fb;padding:11px 10px;white-space:nowrap;font-size:10px}
+.comparisonTable td{border-top:1px solid #e5ecf3;color:#385773;padding:11px 10px;vertical-align:top;line-height:1.5}
+.comparisonTable tr:nth-child(even) td{background:#fbfdff}
+.comparisonTable td strong{display:block;color:#173f60;font-size:11px}
+.comparisonTable td small{display:block;color:#879aae;font-size:10px;margin-top:4px;max-width:230px}
+.comparisonResult{display:inline-flex;white-space:nowrap;padding:5px 8px;border-radius:7px;border:1px solid #dae4eb;background:#f4f7fa;color:#60788b;font-weight:800;font-size:10px}
+.comparisonResult.ok{background:#e7f6ee;color:#267252;border-color:#c8e8d7}
+.comparisonResult.bad{background:#fff1e1;color:#966020;border-color:#efd6b5}
+.comparisonMethod{background:#f7fafd;border-radius:10px;padding:15px;border:1px solid #e2eaf2}
+.comparisonMethod strong{font-size:11.5px;color:#254d6c}
+.comparisonMethod ul{padding-left:18px;margin:9px 0 0}
+.comparisonMethod li{font-size:10.5px;color:#637e95;line-height:1.65;margin-bottom:4px}
+.comparisonAIFinding{border:1px solid #c5dbeb;background:#f2f8fd;border-radius:10px;padding:16px}
+.comparisonAIFinding strong{display:block;color:#153e60;font-size:14px;margin-top:7px}
+.comparisonAIFinding p{font-size:11.5px;color:#41627e;line-height:1.7;margin:8px 0}
+.comparisonFoot{display:block;font-size:10px;color:#748b9d;margin-top:11px;line-height:1.55}
+@media(max-width:750px){.comparisonSources{grid-template-columns:1fr}.comparisonHeading{display:block}.comparisonSummary{margin-top:12px}.comparisonContent{gap:13px}}
