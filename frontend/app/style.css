@@ -148,3 +148,22 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;backgro
 .rawNextStep span{font-size:10.5px;color:#8296aa}
 .rawNextStep button{margin-top:7px}
 @media(max-width:1000px){.rawDocCards{grid-template-columns:1fr}}
+
+
+/* Batch AI configuration is adjacent to the Run all control */
+.batchConfig{margin:12px 0 16px;padding:14px 12px;background:#f6faff;border:1px solid #d7e6f3;border-radius:11px}
+.batchConfigHeading{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:12px}
+.batchConfigHeading strong{font-size:12px;color:#1b496c}
+.batchConfigHeading span{font-size:10px;color:#7590a6}
+.batchConfig .modelCard{padding:0;border:0;background:transparent;box-shadow:none;border-radius:0}
+.batchConfig .modelCardTitle{display:none}
+.batchConfig .configGrid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.batchConfig .fieldLabel,.batchConfig .configGrid label{display:block;min-width:0}
+.batchConfig select,.batchConfig input{width:100%;min-width:0;font-size:12px;padding:9px 10px}
+.batchConfig .batchHint{margin:10px 0 0;color:#5f829e}
+.batchStatus{padding:10px 11px;font-size:10.5px;line-height:1.55;background:#f0f6fb;border:1px solid #d8e7f2;border-radius:8px;color:#245c86;overflow-wrap:anywhere;margin:0 0 15px}
+.batchStatus.error{background:#fff5f2;border-color:#f5d2c9;color:#a1473d}
+.singleModelSettings{margin:6px 0 16px}
+.singleModelSettings>.subtext{background:#f4f9fd;border:1px solid #dce9f4;border-radius:10px;padding:12px 14px;margin:0 0 13px}
+.singleModelSettings>.subtext strong{color:#174669}
+.singleModelSettings .modelGrid{grid-template-columns:minmax(0,1fr)}
