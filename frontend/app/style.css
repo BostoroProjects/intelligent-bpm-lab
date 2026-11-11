@@ -174,3 +174,38 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;backgro
 .emailButton{display:inline-flex;align-items:center;justify-content:center;padding:9px 12px;border-radius:8px;border:1px solid #c7dcee;background:#ecf5fc;color:#1d5c90;font-size:11px;font-weight:800;text-decoration:none;transition:background .15s}
 .emailButton:hover{background:#dcecf9}
 .emailNotice{display:block;margin-top:9px;font-size:10px;color:#748ba1;line-height:1.55}
+
+/* Results register: table / statistical dashboard */
+.registerHeadActions{display:flex;flex-direction:column;align-items:flex-end;gap:11px}
+.registerViewTabs{display:inline-flex;align-items:center;gap:3px;padding:4px;border-radius:10px;background:#edf3f9;border:1px solid #dfe9f2}
+.registerViewTabs button{color:#6b8195;background:transparent;padding:8px 14px;font-size:11px;box-shadow:none}
+.registerViewTabs button.active{background:#fff;color:#1d557f;box-shadow:0 1px 7px #17395918}
+.registerViewTabs button:hover:not(:disabled){background:#f8fbff;box-shadow:none}
+.statisticsView{padding-top:9px}
+.statisticsIntro{font-size:11.5px;color:#69839b;line-height:1.6;margin:5px 0 17px}
+.statisticsKPIs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:15px}
+.statKpi{background:#f6f9fc;border:1px solid #e0eaf2;border-radius:10px;padding:17px 15px}
+.statKpi span{display:block;color:#71889c;font-size:11px;font-weight:750}
+.statKpi strong{display:block;font:800 24px 'Plus Jakarta Sans',sans-serif;color:#1b4467;margin:8px 0}
+.statKpi small{font-size:10.5px;color:#859bae}
+.statPanels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-bottom:15px}
+.statPanel{border:1px solid #e1eaf2;border-radius:11px;padding:18px 19px;min-width:0}
+.statPanel h4{font:800 13px 'Plus Jakarta Sans',sans-serif;color:#174061;margin:0 0 6px}
+.statHelp{color:#7e94a8;line-height:1.65;font-size:10.5px;margin:7px 0 15px}
+.distributionTrack{display:flex;height:24px;border-radius:7px;overflow:hidden;margin:29px 0 15px;background:#e7edf3}
+.distributionCorrect{background:#75bb96}
+.distributionExceptions{background:#e8b26a}
+.distributionPending{background:#aebfce}
+.statLegend{display:flex;gap:12px;flex-wrap:wrap;font-size:10.5px;color:#5e7790}
+.statLegend span{display:inline-flex;align-items:center;gap:5px}
+.legendDot{display:inline-block;height:9px;width:9px;border-radius:99px;background:#afc1cf}
+.legendDot.correct{background:#75bb96}.legendDot.exception{background:#e8b26a}.legendDot.pending{background:#aebfce}
+.statBarRow{margin:13px 0}
+.statBarLabel{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px;color:#4b6d87;margin-bottom:7px}
+.statBarLabel strong{font-weight:850;color:#194c70}
+.statBarTrack{height:9px;overflow:hidden;background:#eff4f8;border-radius:8px}
+.statBarTrack>div{height:100%;background:#86a9c5;border-radius:8px;min-width:0}
+.statValueRow{display:flex;justify-content:space-between;align-items:start;gap:10px;border-bottom:1px solid #e9eff4;padding:13px 0;font-size:11px;color:#67839a}
+.statValueRow strong{color:#1f4b6c;text-align:right;overflow-wrap:anywhere;font-size:11.5px}
+@media(max-width:900px){.statisticsKPIs{grid-template-columns:repeat(2,minmax(0,1fr))}.statPanels{grid-template-columns:1fr}}
+@media(max-width:620px){.invoiceTableHeader .registerHeadActions{align-items:flex-start;margin-top:10px}.registerViewTabs{width:auto}.statisticsKPIs{gap:8px}.statKpi{padding:13px}.statKpi strong{font-size:20px}.statPanel{padding:15px}}
