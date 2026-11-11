@@ -130,9 +130,9 @@ def invoice_pdf(case_id: str, download: bool = False):
     right(money(item["invoice_unit_price"]), 451, 509)
     right(money(total), 538, 509, 10, navy, True)
     doc.line(48, 483, 548, 483)
-    right("Subtotal", 447, 451, 10, gray)
+    right("Subtotal", 390, 451, 10, gray)
     right(f"CHF {money(total)}", 538, 451, 11, navy)
-    right("AMOUNT DUE", 447, 414, 11, navy, True)
+    right("AMOUNT DUE", 390, 414, 11, navy, True)
     right(f"CHF {money(total)}", 538, 414, 15, navy, True)
 
     write("Payment terms", 48, 347, 10, navy, True)
