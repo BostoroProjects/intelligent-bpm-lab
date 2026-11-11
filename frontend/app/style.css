@@ -209,3 +209,12 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;backgro
 .statValueRow strong{color:#1f4b6c;text-align:right;overflow-wrap:anywhere;font-size:11.5px}
 @media(max-width:900px){.statisticsKPIs{grid-template-columns:repeat(2,minmax(0,1fr))}.statPanels{grid-template-columns:1fr}}
 @media(max-width:620px){.invoiceTableHeader .registerHeadActions{align-items:flex-start;margin-top:10px}.registerViewTabs{width:auto}.statisticsKPIs{gap:8px}.statKpi{padding:13px}.statKpi strong{font-size:20px}.statPanel{padding:15px}}
+
+/* Fictional invoice portal registration */
+.portalButton{display:inline-flex;justify-content:center;align-items:center;gap:5px;padding:9px 12px;border:1px solid #b9d7c9;background:#e9f7ee;color:#25664c;border-radius:8px;font-size:10.5px;font-weight:850;white-space:nowrap}
+.portalButton:hover:not(:disabled){background:#d8f0e3;box-shadow:none;color:#1d6344}
+.portalButton:disabled:not(.registered){background:#f2f5f8;border-color:#dce5ec;color:#8297a7;opacity:.65}
+.portalButton.registered,.portalButton.registered:disabled{background:#e3f5e9;color:#246c4a;border-color:#bfe4ce;opacity:1;cursor:default}
+.invoiceDocumentActions .portalButton{padding:9px 13px}
+.portalHint{font-size:10.5px;color:#708a9f;line-height:1.6;margin:7px 0 13px}
+.invoiceRegister .portalButton{font-size:10px;padding:7px 9px}
