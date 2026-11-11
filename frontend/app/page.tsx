@@ -63,7 +63,7 @@ const label=(k:string)=>({PRICE_MISMATCH:"Price mismatch",QUANTITY_MISMATCH:"Qua
 export default function Home(){
  const [cases,setCases]=useState<Case[]>(initialCases),[evaluations,setEvaluations]=useState<Record<string,Evaluation>>({}),[selected,setSelected]=useState("INV-001"),[view,setView]=useState<"analyze"|"compare">("analyze"),[tab,setTab]=useState<"raw"|"ai">("raw");
  const [primary,setPrimary]=useState<Config>({provider:"OpenAI",model:"gpt-4.1-mini",key:"",region:"international"}),[secondary,setSecondary]=useState<Config>({provider:"Claude",model:"claude-sonnet-4-5",key:"",region:"international"});
- const [mode,setMode]=useState<"live"|"demo">("live"),[previewId,setPreviewId]=useState<string|null>(null),[registerView,setRegisterView]=useState<"table"|"statistics">("table"),[tableQuery,setTableQuery]=useState(""),[tableFilter,setTableFilter]=useState<"all"|"correct"|"exception"|"pending">("all"),[results,setResults]=useState<Record<string,Result>>({}),[batchDone,setBatchDone]=useState(false),[batchResults,setBatchResults]=useState<Record<string,BatchItem>>({}),[batchMeta,setBatchMeta]=useState<{provider:string;model:string;seconds?:number}|null>(null),[running,setRunning]=useState(false),[status,setStatus]=useState(""),[api,setApi]=useState("Connecting to API…"),[review,setReview]=useState<Record<string,string>>({}),[portalRegistrations,setPortalRegistrations]=useState<Record<string,{registeredAt:string;mode:"live"|"demo"}>>({});
+ const [mode,setMode]=useState<"live"|"demo">("live"),[previewId,setPreviewId]=useState<string|null>(null),[registerView,setRegisterView]=useState<"table"|"statistics">("table"),[tableQuery,setTableQuery]=useState(""),[tableFilter,setTableFilter]=useState<"all"|"correct"|"exception"|"pending">("all"),[results,setResults]=useState<Record<string,Result>>({}),[batchDone,setBatchDone]=useState(false),[batchResults,setBatchResults]=useState<Record<string,BatchItem>>({}),[batchMeta,setBatchMeta]=useState<{provider:string;model:string;seconds?:number}|null>(null),[running,setRunning]=useState(false),[status,setStatus]=useState(""),[api,setApi]=useState("Connecting to API…"),[review,setReview]=useState<Record<string,string>>({}),[portalRegistrations,setPortalRegistrations]=useState<Record<string,{registeredAt:string;mode:"live"|"demo"}>>({}),[autoRegister,setAutoRegister]=useState(false);
  useEffect(()=>{let cancelled=false;fetch("/api/cases",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("API offline");return r.json()}).then(data=>{if(cancelled)return;if(Array.isArray(data.cases)&&data.cases.length){setCases(data.cases);setEvaluations(data.evaluations||{})}setApi("API connected")}).catch(()=>{if(!cancelled)setApi("Demo mode · API unavailable")});return()=>{cancelled=true}},[]);
  const chosen=cases.find(c=>c.id===selected)||cases[0];
  // Raw invoice, purchase order and receipt values are displayed without pre-classification.
@@ -73,6 +73,13 @@ export default function Home(){
    if(batch)return batch.status;
    const individual=parseOutput(results[id+"|A"]?.output);
    return individual?.status==="correct"||individual?.status==="exception"?individual.status:null;
+ }
+ function autoRegisterCorrect(items:BatchItem[],source:"live"|"demo"){
+   if(!autoRegister)return 0;
+   const registeredAt=new Date().toLocaleString("en-GB");
+   const correct=items.filter(item=>item.status==="correct"&&cases.some(c=>c.id===item.case_id));
+   setPortalRegistrations(Object.fromEntries(correct.map(item=>[item.case_id,{registeredAt,mode:source}])));
+   return correct.length;
  }
  function registerInPortal(c:Case){
    if(classificationFor(c.id)!=="correct"||portalRegistrations[c.id])return;
@@ -93,7 +100,8 @@ export default function Home(){
      const simulated=cases.map(demoReview);
      const map=Object.fromEntries(simulated.map(x=>[x.case_id,x])) as Record<string,BatchItem>;
      setBatchResults(map);setBatchMeta({provider:"Demo",model:"SIMULATION",seconds:0});setBatchDone(true);
-     setResults({});setStatus("DEMO MODE: "+simulated.filter(x=>x.status==="correct").length+" correct and "+simulated.filter(x=>x.status==="exception").length+" exceptions simulated. No AI request or API key used.");setTab("ai");
+     const registered=autoRegisterCorrect(simulated,"demo");
+     setResults({});setStatus("DEMO MODE: "+simulated.filter(x=>x.status==="correct").length+" correct and "+simulated.filter(x=>x.status==="exception").length+" exceptions simulated. No AI request or API key used."+(autoRegister?" "+registered+" correct invoices automatically registered in the fictional portal.":""));setTab("ai");
      return;
    }
    if(!primary.key.trim()||!primary.model.trim()){setStatus("Enter a primary-model API key and model ID before running the AI batch.");return}
@@ -109,7 +117,8 @@ export default function Home(){
      const missing=cases.filter(c=>!map[c.id]).map(c=>c.id);
      setBatchResults(map);setBatchMeta({provider:data.provider,model:data.model,seconds:data.elapsed_seconds});setBatchDone(true);
      const passed=known.filter(x=>x.status==="correct").length,flagged=known.filter(x=>x.status==="exception").length;
-     setStatus("AI classified "+known.length+"/"+cases.length+" invoices in one request: "+passed+" correct, "+flagged+" exceptions."+(missing.length?" Missing classifications: "+missing.join(", ")+".":"")+" Select any invoice to inspect its AI assessment.");
+     const registered=autoRegisterCorrect(known,"live");
+     setStatus("AI classified "+known.length+"/"+cases.length+" invoices in one request: "+passed+" correct, "+flagged+" exceptions."+(missing.length?" Missing classifications: "+missing.join(", ")+".":"")+(autoRegister?" "+registered+" correct invoices automatically registered in the fictional portal.":"")+" Select any invoice to inspect its AI assessment.");
      setTab("ai");
    }catch(e){setStatus("AI batch failed: "+(e instanceof Error?e.message:"Unknown error")+". No invoices were marked as processed.");}
    finally{setRunning(false)}
@@ -174,6 +183,7 @@ export default function Home(){
 </section>
 <div className="workArea"><aside className="sidebar"><section className="panel casePanel"><div className="panelHeading"><div><div className="sectionKicker">01 / SELECT</div><h3>Invoice queue</h3></div><span className="pill">{cases.length} cases</span></div><p className="subtext">Run the full queue or select an invoice to inspect.</p>
 <button className="batchButton" disabled={running||cases.length===0||(mode==="live"&&(!primary.key.trim()||!primary.model.trim()))} onClick={()=>void runAll()}>{running?"Processing invoices…":mode==="demo"?"Run all "+cases.length+" · Demo →":"Run all invoices with AI →"}</button>
+<label className="autoRegisterControl"><span className="autoRegisterText"><strong>Auto-register correct invoices</strong><small>{autoRegister?"On · correct invoices will be registered after batch analysis":"Off · register correct invoices manually"} · Fictional portal only</small></span><input type="checkbox" role="switch" aria-label="Auto-register correct invoices" aria-checked={autoRegister} checked={autoRegister} disabled={running} onChange={e=>setAutoRegister(e.target.checked)}/><span aria-hidden="true" className="autoRegisterSlider"/></label>
 {mode==="live"?<div className="batchConfig"><div className="batchConfigHeading"><strong>AI configuration</strong><span>For all {cases.length} invoices</span></div>{configUI("A",primary)}<p className="batchHint">{primary.key.trim()?"Ready to analyze all "+cases.length+" invoices in one AI request.":"Select your provider and model, then enter the API key to enable the batch run."}</p></div>:<p className="batchHint">Demo (No AI): all {cases.length} invoices are simulated locally. No model or API key needed.</p>}
 {status&&<p role="status" className={"batchStatus "+(status.toLowerCase().includes("fail")||status.toLowerCase().includes("error")?"error":"")}>{status}</p>}
 <div className="caseList">{cases.map(c=><button key={c.id} className={"caseChoice "+(c.id===chosen.id?"selected":"")} onClick={()=>{setSelected(c.id);setTab("raw");setStatus("")}}><div className="choiceTop"><span className="caseNumber">{c.id}</span><span className={"caseFlag "+(batchResults[c.id]?.status==="exception"?"flagged":batchResults[c.id]?.status==="correct"?"passed":"")}>{batchResults[c.id]?.status==="exception"?(mode==="demo"?"Demo exception":"AI exception"):batchResults[c.id]?.status==="correct"?(mode==="demo"?"Demo correct":"AI correct"):"Not scanned"}</span></div><strong>{c.invoice}</strong><span className="choiceDetail">{c.supplier}</span></button>)}</div></section><section className="panel privacyPanel"><div className="shield">✓</div><div><strong>Safe academic demo</strong><p>All invoice records are fictional. No payments, approvals, or messages are executed.</p></div></section></aside>
